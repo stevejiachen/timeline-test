@@ -8,37 +8,52 @@ import { BULLET_LEFT_OFFSET, ITEM_X_PADDING } from "../constants";
 class NumberLineItem extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      editing: false,
-    }
+    this.textInput = React.createRef();
   }
+  handleEdit = () => {
+    this.props.onSelect(this.props.id)
+  };
 
   handleSubmit = (e) => {
-    e.stopPropagation()
-    this.setState({editing: false});
+    e.stopPropagation();
+    this.props.onEditLabel(this.props.id, this.textInput.current.value);
+    this.props.onSelect(null)
+  };
+
+  handleDelete = (e) => {
+    e.stopPropagation();
+    if (confirm('are you sure to delete this item ?')) {
+      this.props.onDeleteItem(this.props.id);
+      this.props.onSelect(null)
+    } else {
+      this.props.onSelect(null)
+    }
+  };
+
+  handleCancel = (e) => {
+    e.stopPropagation();
+    this.props.onSelect(null)
   }
-  handleChange = (e, id) => {
-    this.props.onEditLabel(id, e.target.value)
-  }
+
   render() {
     const style = {
       left: this.props.left + BULLET_LEFT_OFFSET - ITEM_X_PADDING,
       top: this.props.top,
       width: this.props.width,
-      zIndex: this.state.editing && 1000
     };
     return (
-      <div className="numberLineItem" style={style} onClick={() => this.setState({editing: true})}>
+      <div className="numberLineItem" style={style} onClick={this.handleEdit}>
         <div className="numberLineItemBullet" />
-        {!this.state.editing
+        {this.props.selectedItem !== this.props.id
           ?
           <span>{this.props.label}</span>
           :
           <div style={{display: 'flex'}}>
-            <textarea type="text" value={this.props.label} onChange={(e) => this.handleChange(e, this.props.id)}/>
-            <div>
-              <button onClick={() => this.props.onDeleteItem(this.props.id)}>X</button>
-              <button onClick={this.handleSubmit}>Submit</button>
+            <textarea type="text" defaultValue={this.props.label} ref={this.textInput} />
+            <div style={{width: 100}}>
+              <button onClick={this.handleSubmit}>Save</button>
+              <button onClick={this.handleDelete}>Delete</button>
+              <button onClick={this.handleCancel}>X</button>
             </div>
           </div>
         }
@@ -56,6 +71,8 @@ NumberLineItem.propTypes = {
   label: PropTypes.string.isRequired,
   onDeleteItem: PropTypes.func.isRequired,
   onEditLabel: PropTypes.func.isRequired,
+  onSelect: PropTypes.func.isRequired,
+  selectedItem: PropTypes.string,
 };
 
 export default NumberLineItem;

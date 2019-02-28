@@ -8,13 +8,15 @@ const EDIT_LABEL = "object:EDIT_LABEL";
 const EDIT_POSITION = "object:EDIT_POSITION";
 const CHANGE_SCALE = "numberLine:CHANGE_SCALE";
 const DELETE_ITEM = "object:DELETE_ITEM";
+const SELECT_ITEM = "object: SELECT_ITEM";
 
 export const actionTypes = {
     CREATE_ITEM,
     EDIT_LABEL,
     EDIT_POSITION,
     CHANGE_SCALE,
-    DELETE_ITEM
+    DELETE_ITEM,
+    SELECT_ITEM
 };
 
 const createItem = (label, position) => {
@@ -56,10 +58,18 @@ const editPosition = (id, position) => {
     }
   };
 
+  const selectItem = id => {
+    return {
+      type: SELECT_ITEM,
+      id,
+    }
+  };
+
 export default {
   createItem,
   editLabel,
   editPosition,
   changeScale,
   deleteItem,
+  selectItem,
 };

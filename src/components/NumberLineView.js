@@ -6,7 +6,7 @@ import NumberLineItem from "./NumberLineItem";
 
 import "../styles/base.scss";
 import "./NumberLine.scss";
-import {getHeaderTickSpacing, makeSelectItems} from "./selectors";
+import {getCurrentSelectedItem, getHeaderTickSpacing, makeSelectItems} from "./selectors";
 import actions from "../actions";
 import { MIN_HEADER_TICK_SPACING, VERTICAL_ITEM_SPACING } from "../constants";
 
@@ -28,6 +28,8 @@ const NumberLineView = props => {
       label={it.label}
       onDeleteItem={props.onDeleteItem}
       onEditLabel={props.onEditLabel}
+      onSelect={props.onSelect}
+      selectedItem={props.selectedItem}
     />;
   }).toList();
   maximumValue += props.tickSpacing;
@@ -77,11 +79,14 @@ const mapStateToProps = (state) => {
   const itemHeights = items.map((item) => item.top + item.height).toList();
   const height = Math.max(...itemHeights.toJS());
 
+  const selectedItem = getCurrentSelectedItem(state);
+
   return {
       items,
       unitsPerPixel,
       tickSpacing,
-      height
+      height,
+      selectedItem,
   };
 };
 
@@ -95,6 +100,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     onEditLabel: (id, label) => {
       dispatch(actions.editLabel(id, label))
+    },
+    onSelect: (id) => {
+      dispatch(actions.selectItem(id))
     }
   };
 };
@@ -107,6 +115,7 @@ NumberLineView.propTypes = {
   onChangeScale: PropTypes.func.isRequired,
   onDeleteItem: PropTypes.func.isRequired,
   onEditLabel: PropTypes.func.isRequired,
+  onSelect: PropTypes.func.isRequired,
 };
 
 export default connect(

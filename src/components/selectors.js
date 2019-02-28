@@ -1,8 +1,10 @@
-import { createSelector } from 'reselect'
+import { createSelector } from 'reselect';
+import createCachedSelector from 're-reselect';
+import immutable from "immutable";
 import {
   BULLET_WIDTH_INCLUDING_MARGIN,
   MAX_ITEM_TEXT_WIDTH,
-  MIN_HEADER_TICK_SPACING,
+  MIN_HEADER_TICK_SPACING, VERTICAL_ITEM_SPACING,
 } from "../constants";
 import immutableRecords from "../types/immutableRecords";
 import calcTextSize from "../utils/calcTextSize";
@@ -12,27 +14,34 @@ import calculateYCoordinate from '../utils/calculateItemYCoordinate';
 // import calcTextSize from "../utils/calcTextSize";
 // import immutableRecords from "../types/immutableRecords";
 // ... plus additional values from constants
-const selectItemsDomain = state => state.get('items');
+const selectItems = state => state.get('items');
+const selectItemsOrdered = state => state.get('items').sortBy(item => item.value);
 const selectUnitsPerPixel = state => state.get('unitsPerPixel');
 
-const getLabel = item => item.label;
-const getTextMaxWidth = () => MAX_ITEM_TEXT_WIDTH
+export const getItemById = (items, id) => items.get(id);
+const getTextMaxWidth = () => MAX_ITEM_TEXT_WIDTH;
 
-export const cachedCalcTextSize = createSelector(
-  getLabel,
+export const getCurrentSelectedItem = (state) => state.get('selectedItem');
+
+export const createCachedCalcTextSize = createCachedSelector(
+  getItemById,
   getTextMaxWidth,
-  (label, maxWidth) => calcTextSize(label, maxWidth)
-)
+  (item, maxWidth) => calcTextSize(item.label, maxWidth)
+)(
+  (items, id) => id
+);
+
 
 export const makeSelectItems = createSelector(
-  selectItemsDomain,
+  selectItemsOrdered,
   selectUnitsPerPixel,
-  (selectItemsDomain, selectUnitsPerPixel) => {
-    const itemsWithSize = selectItemsDomain.sortBy(item => item.value).map((item) => {
-      // const textSize = calcTextSize(item.label, MAX_ITEM_TEXT_WIDTH);
-      const textSize = cachedCalcTextSize(item)
-      textSize.width = textSize.width + BULLET_WIDTH_INCLUDING_MARGIN;
-      return immutableRecords.ItemDisplayRecord().merge(item, textSize);
+  (items, selectUnitsPerPixel) => {
+    const itemsWithSize = items.map((item) => {
+      const textSize = createCachedCalcTextSize(items, item.id);
+      const copiedTextSize = {...textSize};
+      copiedTextSize.width = copiedTextSize.width + BULLET_WIDTH_INCLUDING_MARGIN;
+      copiedTextSize.height = copiedTextSize.height + VERTICAL_ITEM_SPACING;
+      return immutableRecords.ItemDisplayRecord().merge(item, copiedTextSize);
     });
     const existingItems = [];
     return itemsWithSize.map((item) => {

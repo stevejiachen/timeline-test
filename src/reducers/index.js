@@ -13,9 +13,19 @@
   }
  }
 
+ const selectedItem = (state, action) => {
+   switch (action.type) {
+     case actionTypes.SELECT_ITEM:
+       return action.id;
+     default:
+       return state;
+   }
+ }
+
 const combinedReducers = combineReducersImmutable(immutableRecords.NumberLineRecord(), {
   unitsPerPixel,
-  items
+  items,
+  selectedItem
 });
 
 export default combinedReducers;
