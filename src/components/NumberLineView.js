@@ -6,7 +6,7 @@ import NumberLineItem from "./NumberLineItem";
 
 import "../styles/base.scss";
 import "./NumberLine.scss";
-import {getHeaderTickSpacing, makeSelectItems} from "./selectors";
+import {getHeaderTickSpacing, getItems} from "./selectors";
 import actions from "../actions";
 import { MIN_HEADER_TICK_SPACING, VERTICAL_ITEM_SPACING } from "../constants";
 
@@ -26,8 +26,6 @@ const NumberLineView = props => {
       width={it.width}
       top={it.top}
       label={it.label}
-      onDeleteItem={props.onDeleteItem}
-      onEditLabel={props.onEditLabel}
     />;
   }).toList();
   maximumValue += props.tickSpacing;
@@ -37,7 +35,7 @@ const NumberLineView = props => {
 
   // Manually set the height of the items canvas
   const itemsStyle = {
-    height: `${props.height + VERTICAL_ITEM_SPACING}px`
+    height: `500px`
   };
 
   // Render the view, including:
@@ -68,7 +66,7 @@ const NumberLineView = props => {
 const mapStateToProps = (state) => {
   // Task 1: Modify to derive items from redux store ("state" parameter)
 
-  const items = makeSelectItems(state);
+  const items = getItems(state);
 
   const unitsPerPixel = state.unitsPerPixel;
   const tickSpacing = getHeaderTickSpacing(unitsPerPixel);
@@ -90,12 +88,6 @@ const mapDispatchToProps = (dispatch) => {
     onChangeScale: scale => {
       dispatch(actions.changeScale(scale));
     },
-    onDeleteItem: id => {
-      dispatch(actions.deleteItem(id));
-    },
-    onEditLabel: (id, label) => {
-      dispatch(actions.editLabel(id, label))
-    }
   };
 };
 
@@ -105,8 +97,6 @@ NumberLineView.propTypes = {
   height: PropTypes.number.isRequired,
   items: PropTypes.any.isRequired,
   onChangeScale: PropTypes.func.isRequired,
-  onDeleteItem: PropTypes.func.isRequired,
-  onEditLabel: PropTypes.func.isRequired,
 };
 
 export default connect(

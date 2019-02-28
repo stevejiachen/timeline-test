@@ -17,7 +17,7 @@ const calculateYCoordinate = (item, existingItems) => {
   let overlapWithAtLeastOneItem = false;
   existingItems.forEach((existingItem) => {
     if (itemsOverlap(currentItem, existingItem)) {
-      y += existingItem.height;
+      y += existingItem.height ;
       currentItem.top = currentItem.top + existingItem.height;
       // return true;
       overlapWithAtLeastOneItem = true;

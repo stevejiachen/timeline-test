@@ -27,6 +27,7 @@ const calcWordWidth = (word) => {
 // including any word wrapping required to fit inside maxWidth.
 // You should not need to modify this function.
 const calcTextSize = (text, maxWidth) => {
+  console.log('calc TextSize')
   const spaceWidth = UbuntuCharWidthMap[" "];
 
   if (!text) {
