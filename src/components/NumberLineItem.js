@@ -22,30 +22,51 @@ class NumberLineItem extends React.Component {
     this.textInput = React.createRef();
   }
 
+  handleEdit = () => {
+    this.props.onSelect(this.props.id)
+  };
+
   handleSubmit = (e) => {
-    e.stopPropagation()
-    this.setState({editing: false}, this.props.onEditLabel(this.props.item.id, this.textInput.current.value));
+    e.stopPropagation();
+    this.props.onEditLabel(this.props.item.id, this.textInput.current.value);
+    this.props.onSelect(null)
+  };
+
+  handleDelete = (e) => {
+    e.stopPropagation();
+    if (confirm('are you sure to delete this item ?')) {
+      this.props.onDeleteItem(this.props.item.id);
+      this.props.onSelect(null)
+    } else {
+      this.props.onSelect(null)
+    }
+  };
+
+  handleCancel = (e) => {
+    e.stopPropagation();
+    this.props.onSelect(null)
   }
+
   render() {
     const {item} = this.props;
     const style = {
       left: item.left + BULLET_LEFT_OFFSET - ITEM_X_PADDING,
       top: item.top,
       width: item.width,
-      zIndex: this.state.editing && 1000
     };
     return (
-      <div className="numberLineItem" style={style} onClick={() => this.setState({editing: true})}>
+      <div className="numberLineItem" style={style} onClick={this.handleEdit}>
         <div className="numberLineItemBullet" />
-        {!this.state.editing
+        {this.props.selectedItem !== item.id
           ?
-          <span>{this.props.label}</span>
+          <span>{item.label}</span>
           :
           <div style={{display: 'flex'}}>
-            <textarea type="text" ref={this.textInput} defaultValue={item.label} />
-            <div>
-              <button onClick={() => this.props.onDeleteItem(item.id)}>X</button>
-              <button onClick={this.handleSubmit}>Submit</button>
+            <textarea type="text" defaultValue={item.label} ref={this.textInput} />
+            <div style={{width: 100}}>
+              <button onClick={this.handleSubmit}>Save</button>
+              <button onClick={this.handleDelete}>Delete</button>
+              <button onClick={this.handleCancel}>X</button>
             </div>
           </div>
         }
@@ -74,6 +95,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     onEditLabel: (id, label) => {
       dispatch(actions.editLabel(id, label))
+    },
+    onSelect: (id) => {
+      dispatch(actions.selectItem(id))
     }
   };
 };

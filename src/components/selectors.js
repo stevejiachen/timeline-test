@@ -17,6 +17,7 @@ export const getItemById = (state, props) => state.get('items').get(props.id);
 export const getTextMaxWidth = () => MAX_ITEM_TEXT_WIDTH;
 export const getItems = (state) => state.get('items').sortBy(item => item.value);
 export const getItemWithSize = (state, props) => props;
+export const getCurrentSelectedItem = (state) => state.get('selectedItem');
 
 const existingItems = [];
 
@@ -25,9 +26,10 @@ export const makeSelectItemWithSize = () => {
     [getItemById, getTextMaxWidth],
     (item, maxWidth) => {
       const textSize = calcTextSize(item.label, maxWidth);
-      textSize.width = textSize.width + BULLET_WIDTH_INCLUDING_MARGIN + MIN_HORIZONTAL_SPACING;
-      textSize.height = textSize.height + VERTICAL_ITEM_SPACING;
-      return immutableRecords.ItemDisplayRecord().merge(item, textSize);
+      const copiedTextSize = {...textSize};
+      copiedTextSize.width = copiedTextSize.width + BULLET_WIDTH_INCLUDING_MARGIN + MIN_HORIZONTAL_SPACING;
+      copiedTextSize.height = copiedTextSize.height + VERTICAL_ITEM_SPACING;
+      return immutableRecords.ItemDisplayRecord().merge(item, copiedTextSize);
     }
   )
 };

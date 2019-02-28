@@ -6,7 +6,7 @@ import NumberLineItem from "./NumberLineItem";
 
 import "../styles/base.scss";
 import "./NumberLine.scss";
-import {getHeaderTickSpacing, getItems} from "./selectors";
+import {getCurrentSelectedItem, getHeaderTickSpacing, getItems} from "./selectors";
 import actions from "../actions";
 import { MIN_HEADER_TICK_SPACING, VERTICAL_ITEM_SPACING } from "../constants";
 
@@ -22,10 +22,7 @@ const NumberLineView = props => {
       key={it.id}
       id={it.id}
       value={it.value}
-      left={it.left}
-      width={it.width}
-      top={it.top}
-      label={it.label}
+      selectedItem={props.selectedItem}
     />;
   }).toList();
   maximumValue += props.tickSpacing;
@@ -75,11 +72,14 @@ const mapStateToProps = (state) => {
   const itemHeights = items.map((item) => item.top + item.height).toList();
   const height = Math.max(...itemHeights.toJS());
 
+  const selectedItem = getCurrentSelectedItem(state);
+
   return {
       items,
       unitsPerPixel,
       tickSpacing,
-      height
+      height,
+      selectedItem,
   };
 };
 
@@ -97,6 +97,7 @@ NumberLineView.propTypes = {
   height: PropTypes.number.isRequired,
   items: PropTypes.any.isRequired,
   onChangeScale: PropTypes.func.isRequired,
+  selectedItem:  PropTypes.object,
 };
 
 export default connect(
