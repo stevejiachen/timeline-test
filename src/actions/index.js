@@ -58,10 +58,10 @@ const editPosition = (id, position) => {
     }
   };
 
-  const selectItem = id => {
+  const selectItem = item => {
     return {
       type: SELECT_ITEM,
-      id,
+      item,
     }
   };
 

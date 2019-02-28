@@ -11,7 +11,7 @@ class NumberLineItem extends React.Component {
     this.textInput = React.createRef();
   }
   handleEdit = () => {
-    this.props.onSelect(this.props.id)
+    this.props.onSelect(this.props.item)
   };
 
   handleSubmit = (e) => {
@@ -41,10 +41,11 @@ class NumberLineItem extends React.Component {
       top: this.props.top,
       width: this.props.width,
     };
+    const { selectedItem } = this.props;
     return (
       <div className="numberLineItem" style={style} onClick={this.handleEdit}>
         <div className="numberLineItemBullet" />
-        {this.props.selectedItem !== this.props.id
+        {!selectedItem || (selectedItem.id !== this.props.id)
           ?
           <span>{this.props.label}</span>
           :
@@ -72,7 +73,7 @@ NumberLineItem.propTypes = {
   onDeleteItem: PropTypes.func.isRequired,
   onEditLabel: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired,
-  selectedItem: PropTypes.string,
+  selectedItem: PropTypes.object,
 };
 
 export default NumberLineItem;

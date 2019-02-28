@@ -21,6 +21,7 @@ const NumberLineView = props => {
     return <NumberLineItem
       key={it.id}
       id={it.id}
+      item={it}
       value={it.value}
       left={it.left}
       width={it.width}
@@ -101,8 +102,8 @@ const mapDispatchToProps = (dispatch) => {
     onEditLabel: (id, label) => {
       dispatch(actions.editLabel(id, label))
     },
-    onSelect: (id) => {
-      dispatch(actions.selectItem(id))
+    onSelect: (item) => {
+      dispatch(actions.selectItem(item))
     }
   };
 };
@@ -116,6 +117,7 @@ NumberLineView.propTypes = {
   onDeleteItem: PropTypes.func.isRequired,
   onEditLabel: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired,
+  selectedItem: PropTypes.object,
 };
 
 export default connect(

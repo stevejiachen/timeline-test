@@ -16,7 +16,7 @@
  const selectedItem = (state, action) => {
    switch (action.type) {
      case actionTypes.SELECT_ITEM:
-       return action.id;
+       return action.item;
      default:
        return state;
    }
