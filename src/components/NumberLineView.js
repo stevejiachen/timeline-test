@@ -6,12 +6,11 @@ import NumberLineItem from "./NumberLineItem";
 
 import "../styles/base.scss";
 import "./NumberLine.scss";
-import {getCurrentSelectedItem, getHeaderTickSpacing, makeSelectItems} from "./selectors";
+import {getAddItemStatus, getCurrentSelectedItem, getHeaderTickSpacing, makeSelectItems} from "./selectors";
 import actions from "../actions";
 import { MIN_HEADER_TICK_SPACING, VERTICAL_ITEM_SPACING } from "../constants";
 
 const NumberLineView = props => {
-
   // Convert the passed in props.items into NumberLineItem
   // and also calculate the maximumValue so we know how far
   // to render the header.
@@ -43,12 +42,40 @@ const NumberLineView = props => {
     height: `${props.height + VERTICAL_ITEM_SPACING}px`
   };
 
+  const handleAdd = (e) => {
+    const offset = {top: 60, left:20};
+    const left = e.pageX - offset.left;
+    const top = e.pageY - offset.top;
+    const value = Math.round(left * 0.02);
+    props.onAddingItem({left, top, value});
+  };
+
+  const newInputPosition = {
+    position: 'absolute',
+    left: props.addItemStatus.getIn(['position', 'left']),
+    top: props.addItemStatus.getIn(['position', 'top']),
+  };
+
+  const handleKeyPress = (e) => {
+    if (!props.addItemStatus.get('label') && e.key === 'Enter') {
+      props.onCloseInput();
+      return
+    }
+    if (e.key === 'Enter') {
+      props.onSubmitAddingItem()
+    }
+  };
+
+  const handleChange = (e) => {
+    props.onAddingItemLabel(e.target.value)
+  };
+
   // Render the view, including:
   //  - scale dropdown at the top
   //  - number line header along the top
   //  - calculated items (above)
   return (
-    <div className="numberLineView">
+    <div className="numberLineView" onClick={handleAdd}>
       <div className="numberLineSettings">
         <span>Scale:</span>
         <select value={dropdownValue} onChange={e => props.onChangeScale(e.target.value / MIN_HEADER_TICK_SPACING)}>
@@ -63,6 +90,17 @@ const NumberLineView = props => {
         <div className="numberLineItems" style={itemsStyle}>
             {itemComponents}
         </div>
+        {
+         props.addItemStatus.get('adding') &&
+          <textarea
+            type="text"
+            style={{...newInputPosition}}
+            autoFocus
+            onClick={(e) => e.stopPropagation()}
+            onKeyPress={handleKeyPress}
+            onChange={handleChange}
+          />
+        }
       </div>
     </div>
   );
@@ -82,12 +120,15 @@ const mapStateToProps = (state) => {
 
   const selectedItem = getCurrentSelectedItem(state);
 
+  const addItemStatus  = getAddItemStatus(state);
+
   return {
       items,
       unitsPerPixel,
       tickSpacing,
       height,
       selectedItem,
+      addItemStatus,
   };
 };
 
@@ -104,7 +145,15 @@ const mapDispatchToProps = (dispatch) => {
     },
     onSelect: (item) => {
       dispatch(actions.selectItem(item))
-    }
+    },
+    onAddingItem: (data) => {
+      dispatch(actions.addingItem(data))
+    },
+    onAddingItemLabel: (label) => {
+      dispatch(actions.addingItemLabel(label))
+    },
+    onSubmitAddingItem: () => dispatch(actions.submitAddingItem()),
+    onCloseInput: () => dispatch(actions.closeInput()),
   };
 };
 
@@ -118,6 +167,11 @@ NumberLineView.propTypes = {
   onEditLabel: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired,
   selectedItem: PropTypes.object,
+  onAddingItem: PropTypes.func.isRequired,
+  addItemStatus: PropTypes.object,
+  onAddingItemLabel: PropTypes.func.isRequired,
+  onSubmitAddingItem: PropTypes.func.isRequired,
+  onCloseInput: PropTypes.func.isRequired,
 };
 
 export default connect(

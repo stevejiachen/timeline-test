@@ -10,7 +10,8 @@ class NumberLineItem extends React.Component {
     super(props);
     this.textInput = React.createRef();
   }
-  handleEdit = () => {
+  handleEdit = (e) => {
+    e.stopPropagation();
     this.props.onSelect(this.props.item)
   };
 
@@ -74,6 +75,7 @@ NumberLineItem.propTypes = {
   onEditLabel: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired,
   selectedItem: PropTypes.object,
+  item: PropTypes.object,
 };
 
 export default NumberLineItem;

@@ -3,6 +3,7 @@
  import { actionTypes } from "../actions";
  import immutableRecords from "../types/immutableRecords";
  import items from "./itemsReducer";
+ import {fromJS} from "immutable";
  
  const unitsPerPixel = (state, action) => {
   switch (action.type) {
@@ -13,10 +14,17 @@
   }
  }
 
- const selectedItem = (state, action) => {
+ const itemActions = (state, action) => {
    switch (action.type) {
      case actionTypes.SELECT_ITEM:
-       return action.item;
+       return state.set('selectedItem', action.item);
+     case actionTypes.ADDING_ITEM:
+       return state.setIn(['addItemStatus', 'position'], action.data)
+         .setIn(['addItemStatus', 'adding'], true);
+     case actionTypes.ADDING_ITEM_LABEL:
+       return state.setIn(['addItemStatus', 'label'], action.label);
+     case actionTypes.CLOSE_INPUT:
+       return state.setIn(['addItemStatus', 'adding'], false);
      default:
        return state;
    }
@@ -25,7 +33,7 @@
 const combinedReducers = combineReducersImmutable(immutableRecords.NumberLineRecord(), {
   unitsPerPixel,
   items,
-  selectedItem
+  itemActions
 });
 
 export default combinedReducers;

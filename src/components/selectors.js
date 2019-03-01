@@ -21,7 +21,9 @@ const selectUnitsPerPixel = state => state.get('unitsPerPixel');
 export const getItemById = (items, id) => items.get(id);
 const getTextMaxWidth = () => MAX_ITEM_TEXT_WIDTH;
 
-export const getCurrentSelectedItem = (state) => state.get('selectedItem');
+export const getAddItemStatus = (state) => state.getIn(['itemActions','addItemStatus']);
+
+export const getCurrentSelectedItem = (state) => state.getIn(['itemActions','selectedItem']);
 
 export const createCachedCalcTextSize = createCachedSelector(
   getItemById,

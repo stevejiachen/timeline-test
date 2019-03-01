@@ -19,7 +19,7 @@ const ItemRecord = immutable.Record({
 
 const NumberLineRecord = immutable.Record({
   unitsPerPixel: 2 / MIN_HEADER_TICK_SPACING,
-  selectedItem: null,
+  itemActions: immutable.Map(),
   items: immutable.Map()
 });
 
@@ -38,8 +38,19 @@ const ItemDisplayRecord = immutable.Record({
   top: 0
 });
 
+const ObjectRecord = immutable.Record({
+  id: null,
+  label: "",
+  value: 0,
+  width: 0,
+  height: 0,
+  left: 0,
+  top: 0
+});
+
 export default {
     ItemRecord,
     NumberLineRecord,
-    ItemDisplayRecord
+    ItemDisplayRecord,
+    ObjectRecord
 }

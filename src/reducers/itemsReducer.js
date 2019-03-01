@@ -11,30 +11,23 @@ import immutableRecords from "../types/immutableRecords";
 // - the value is an ItemRecord object.
 // This structure allows for fast O(1) lookup of items to access inside this reducer.
 
-const createItem = (id, label, position) =>
+const createNewItem = (id, label, value) =>
   immutableRecords.ObjectRecord({
     id,
     label,
-    position
+    value,
   });
 
 const reducer = (state = Map(), action) => {
   switch (action.type) {
-      case actionTypes.CREATE_ITEM:
-        return state.set(
-          action.id,
-          createItem(
-            action.id,
-            action.label,
-            action.position
-          )
-        );
-      case actionTypes.EDIT_LABEL: {
-        return state.setIn([action.id, "label"], action.label);
-      }
-      case actionTypes.EDIT_POSITION: {
-        return state.setIn([action.id, "label"], action.position);
-      }
+    case actionTypes.CREATE_ITEM:
+      return state.set(action.id, createNewItem(action.id, action.label, action.value))
+    case actionTypes.EDIT_LABEL: {
+      return state.setIn([action.id, "label"], action.label);
+    }
+    case actionTypes.EDIT_POSITION: {
+      return state.setIn([action.id, "label"], action.position);
+    }
     case actionTypes.DELETE_ITEM: {
         return state.filter((item) => item.id !== action.id)
     }

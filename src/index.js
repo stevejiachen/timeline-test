@@ -10,6 +10,7 @@ import sampleData from "./store/sampleData";
 import NumberLineView from "./components/NumberLineView";
 import immutableRecords from "./types/immutableRecords";
 import uniqueId from "./utils/uniqueId";
+import {fromJS} from "immutable/dist/immutable";
 
 
 // Convert the sampleData into our Immutable.Record structure.
@@ -25,7 +26,18 @@ sampleData.forEach(d => {
 
 // The initial state of our redux store
 const initialState = immutableRecords.NumberLineRecord({
-    items: itemRecords
+    items: itemRecords,
+    itemActions: fromJS({
+      selectedItem: null,
+      addItemStatus: {
+        adding: false,
+        position: {
+          left: 0,
+          top: 0,
+        },
+        label: '',
+      }
+    })
 });
 
 // And get react/redux going.
